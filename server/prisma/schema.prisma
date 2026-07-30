@@ -1,0 +1,180 @@
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "postgresql"
+  url      = env("DATABASE_URL")
+}
+
+enum Role {
+  ADMIN
+  VAN_THU
+  LANH_DAO
+  TU_PHAP
+  CHUYEN_VIEN
+  TRUONG_PHONG
+}
+
+enum Kenh {
+  TRUC_TIEP
+  BUU_DIEN
+}
+
+enum ComplaintStatus {
+  CHO_TIEP_NHAN_TU_PHAP
+  CHO_LANH_DAO_PHAN_CONG
+  DA_TIEP_NHAN
+  DA_PHAN_CONG
+  DA_XU_LY_CHUYEN_MON
+  CHO_DOI_THOAI
+  DA_DOI_THOAI
+  HOAN_THANH
+}
+
+enum AttachmentLoai {
+  DON_GOC
+  THONG_BAO_TIEP_NHAN
+  BUT_PHE
+  KET_QUA_XU_LY
+  BIEN_BAN_DOI_THOAI
+  QUYET_DINH_GIAI_QUYET
+}
+
+model Department {
+  id        String   @id @default(cuid())
+  ten       String
+  createdAt DateTime @default(now())
+
+  users User[]
+
+  @@map("departments")
+}
+
+model User {
+  id           String   @id @default(cuid())
+  hoTen        String
+  email        String   @unique
+  tenDangNhap  String   @unique
+  soDienThoai  String?
+  chucVu       String?
+  passwordHash String
+  role         Role
+  daKhoa       Boolean  @default(false)
+  departmentId String?
+  department   Department? @relation(fields: [departmentId], references: [id])
+  createdAt    DateTime @default(now())
+
+  donTao          Complaint[] @relation("NguoiTao")
+  donTuPhap       Complaint[] @relation("TuPhap")
+  donLanhDao      Complaint[] @relation("LanhDao")
+  donChuyenVien   Complaint[] @relation("ChuyenVien")
+  donDaXoa        Complaint[] @relation("NguoiXoa")
+
+  lichSuThucHien  ComplaintStatusHistory[]
+  notifications   Notification[]
+
+  @@map("users")
+}
+
+model Complaint {
+  id                  String          @id @default(cuid())
+  maSo                String          @unique
+  kenh                Kenh
+  hoTenNguoiKhieuNai  String
+  soCCCD              String
+  diaChi              String
+  soDienThoai         String
+  noiDungKhieuNai     String
+  ngayTiepNhan        DateTime
+  hanXuLy             DateTime
+  trangThai           ComplaintStatus
+  daSubmitKetQua      Boolean         @default(false)
+
+  nguoiTaoId    String
+  nguoiTao      User    @relation("NguoiTao", fields: [nguoiTaoId], references: [id])
+
+  tuPhapId      String?
+  tuPhap        User?   @relation("TuPhap", fields: [tuPhapId], references: [id])
+
+  lanhDaoId     String?
+  lanhDao       User?   @relation("LanhDao", fields: [lanhDaoId], references: [id])
+
+  chuyenVienId  String?
+  chuyenVien    User?   @relation("ChuyenVien", fields: [chuyenVienId], references: [id])
+
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  deletedAt   DateTime?
+  deletedById String?
+  deletedBy   User? @relation("NguoiXoa", fields: [deletedById], references: [id])
+
+  attachments   ComplaintAttachment[]
+  lichSu        ComplaintStatusHistory[]
+  stepData      ComplaintStepData[]
+  notifications Notification[]
+
+  @@index([deletedAt])
+  @@index([deletedById])
+  @@map("complaints")
+}
+
+/** Dữ liệu nhập riêng cho từng bước xử lý (tiếp nhận, xử lý chuyên môn, đối thoại, quyết định...). */
+model ComplaintStepData {
+  id          String   @id @default(cuid())
+  complaintId String
+  complaint   Complaint @relation(fields: [complaintId], references: [id], onDelete: Cascade)
+  buoc        String
+  duLieu      Json
+  createdAt   DateTime @default(now())
+
+  @@map("complaint_step_data")
+}
+
+model ComplaintAttachment {
+  id          String         @id @default(cuid())
+  complaintId String
+  complaint   Complaint      @relation(fields: [complaintId], references: [id], onDelete: Cascade)
+  loai        AttachmentLoai
+  tenFile     String
+  url         String
+  uploadedAt  DateTime       @default(now())
+
+  @@map("complaint_attachments")
+}
+
+model ComplaintStatusHistory {
+  id              String          @id @default(cuid())
+  complaintId     String
+  complaint       Complaint       @relation(fields: [complaintId], references: [id], onDelete: Cascade)
+  nguoiThucHienId String
+  nguoiThucHien   User            @relation(fields: [nguoiThucHienId], references: [id])
+  role            Role
+  trangThaiTruoc  ComplaintStatus?
+  trangThaiSau    ComplaintStatus
+  ghiChu          String?
+  thoiDiem        DateTime        @default(now())
+
+  @@map("complaint_status_history")
+}
+
+model Notification {
+  id          String    @id @default(cuid())
+  userId      String
+  user        User      @relation(fields: [userId], references: [id])
+  complaintId String
+  complaint   Complaint @relation(fields: [complaintId], references: [id], onDelete: Cascade)
+  noiDung     String
+  daDoc       Boolean   @default(false)
+  thoiDiem    DateTime  @default(now())
+
+  @@map("notifications")
+}
+
+model SystemConfig {
+  id             String @id @default(cuid())
+  hanXuLyMacDinh Int    @default(30)
+
+  @@map("system_config")
+}

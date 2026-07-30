@@ -1,0 +1,91 @@
+@import "tailwindcss";
+@import url("https://fonts.googleapis.com/css2?family=Be+Vietnam+Pro:wght@400;500;600;700;800&display=swap");
+
+@theme {
+  /* Primary - Xanh chính phủ */
+  --color-primary: #1a5ba8;
+  --color-primary-dark: #0d4080;
+  --color-primary-light: #e8f0fb;
+
+  /* Logo color - Xanh lá phường Hiệp Bình */
+  --color-brand-green: #00a84f;
+  --color-brand-green-dark: #007a38;
+
+  /* Accent trạng thái */
+  --color-accent-red: #d32f2f;
+  --color-accent-orange: #f57c00;
+  --color-accent-green: #2e7d32;
+  --color-accent-gray: #546e7a;
+
+  /* Trạng thái badge */
+  --color-status-gray: #78909c;
+  --color-status-blue: #1976d2;
+  --color-status-orange: #e65100;
+  --color-status-yellow: #f9a825;
+  --color-status-purple: #7b1fa2;
+  --color-status-green: #00a84f;
+
+  /* Background */
+  --color-bg-page: #f0f4f8;
+  --color-bg-card: #ffffff;
+  --color-bg-sidebar: #ffffff;
+  --color-bg-sidebar-border: #e5e7eb;
+
+  --font-sans: "Be Vietnam Pro", "Inter", system-ui, "Segoe UI", Roboto, sans-serif;
+}
+
+:root {
+  color-scheme: light;
+}
+
+body {
+  margin: 0;
+  font-family: var(--font-sans);
+  background: var(--color-bg-page);
+  color: #1f2937;
+  -webkit-font-smoothing: antialiased;
+}
+
+#root {
+  min-height: 100svh;
+}
+
+/* Trạng thái tương tác nhất quán toàn app — xem .claude/skills/design/SKILL.md §Trạng thái tương tác */
+@layer base {
+  button,
+  a,
+  input,
+  select,
+  textarea,
+  [tabindex] {
+    transition-property: color, background-color, border-color, box-shadow, opacity, transform;
+    transition-duration: 150ms;
+    transition-timing-function: ease-out;
+  }
+
+  /* Ring 2 lớp (viền trắng + viền primary) để luôn rõ trên cả nền sáng lẫn nền xanh header */
+  button:focus-visible,
+  a:focus-visible,
+  input:focus-visible,
+  select:focus-visible,
+  textarea:focus-visible,
+  [tabindex]:focus-visible {
+    outline: none;
+    box-shadow: 0 0 0 2px #fff, 0 0 0 4px var(--color-primary);
+  }
+}
+
+/* Print rules: chỉ hiện phần được đánh dấu .print-area khi in */
+@media print {
+  body * {
+    visibility: hidden;
+  }
+  .print-area,
+  .print-area * {
+    visibility: visible;
+  }
+  .print-area {
+    position: absolute;
+    inset: 0;
+  }
+}

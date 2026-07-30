@@ -1,0 +1,86 @@
+import type { User } from '@/types/domain'
+
+export const mockUsers: User[] = [
+  {
+    id: 'u-admin',
+    hoTen: 'Nguyễn Văn A',
+    role: 'ADMIN',
+    phongBan: 'Văn phòng',
+    email: 'admin@hiepbinh.gov.vn',
+    tenDangNhap: 'admin',
+    soDienThoai: '0900000001',
+    chucVu: 'Quản trị hệ thống',
+    daKhoa: false,
+  },
+  {
+    id: 'u-vanthu',
+    hoTen: 'Trần Thị Vân',
+    role: 'VAN_THU',
+    phongBan: 'Văn phòng',
+    email: 'vanthu@hiepbinh.gov.vn',
+    tenDangNhap: 'vanthu',
+    soDienThoai: '0900000002',
+    chucVu: 'Nhân viên Văn thư',
+    daKhoa: false,
+  },
+  {
+    id: 'u-lanhdao',
+    hoTen: 'Hoàng Văn Lãnh',
+    role: 'LANH_DAO',
+    phongBan: 'Ban lãnh đạo',
+    email: 'lanhdao@hiepbinh.gov.vn',
+    tenDangNhap: 'lanhdao',
+    soDienThoai: '0900000003',
+    chucVu: 'Chủ tịch UBND phường',
+    daKhoa: false,
+  },
+  {
+    id: 'u-truongphong',
+    hoTen: 'Lê Văn Trưởng',
+    role: 'TRUONG_PHONG',
+    phongBan: 'Kinh tế - Đô thị',
+    email: 'truongphong@hiepbinh.gov.vn',
+    tenDangNhap: 'truongphong',
+    soDienThoai: '0900000004',
+    chucVu: 'Trưởng phòng Kinh tế - Đô thị',
+    daKhoa: false,
+  },
+  {
+    id: 'u-tuphap',
+    hoTen: 'Phạm Thị D',
+    role: 'TU_PHAP',
+    phongBan: 'Tư pháp - Hộ tịch',
+    email: 'tuphap@hiepbinh.gov.vn',
+    tenDangNhap: 'tuphap',
+    soDienThoai: '0900000005',
+    chucVu: 'Chuyên viên Tư pháp',
+    daKhoa: false,
+  },
+  {
+    id: 'u-chuyenvien',
+    hoTen: 'Võ E',
+    role: 'CHUYEN_VIEN',
+    phongBan: 'Kinh tế - Đô thị',
+    email: 'chuyenvien1@hiepbinh.gov.vn',
+    tenDangNhap: 'chuyenvien1',
+    soDienThoai: '0900000006',
+    chucVu: 'Chuyên viên',
+    daKhoa: false,
+  },
+  {
+    id: 'u-chuyenvien2',
+    hoTen: 'Đặng Thị Hoa',
+    role: 'CHUYEN_VIEN',
+    phongBan: 'Địa chính - Xây dựng',
+    email: 'chuyenvien2@hiepbinh.gov.vn',
+    tenDangNhap: 'chuyenvien2',
+    soDienThoai: '0900000007',
+    chucVu: 'Chuyên viên',
+    daKhoa: true,
+  },
+]
+
+export function findUser(id: string | null): User | undefined {
+  if (!id) return undefined
+  return mockUsers.find((u) => u.id === id)
+}
